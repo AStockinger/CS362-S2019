@@ -5,6 +5,12 @@
 #include <math.h>
 #include <stdlib.h>
 
+int playAdventurer(int currentPlayer, struct gameState* state);
+int playSmithy(int currentPlayer, struct gameState* state, int handPos);
+int playAmbassador(int choice1, int choice2, int currentPlayer, int handPos, struct gameState* state);
+int playEmbargo(int choice1, int currentPlayer, int handPos, struct gameState* state);
+int playTreasureMap(int currentPlayer, int handPos, struct gameState* state);
+
 int compare(const void* a, const void* b) {
   if (*(int*)a > *(int*)b)
     return 1;
@@ -649,15 +655,11 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
   int j;
   int k;
   int x;
-  int index;
   int currentPlayer = whoseTurn(state);
   int nextPlayer = currentPlayer + 1;
 
   int tributeRevealedCards[2] = {-1, -1};
   int temphand[MAX_HAND];// moved above the if statement
-  int drawntreasure=0;
-  int cardDrawn;
-  int z = 0;// this is the counter for the temp hand
   if (nextPlayer > (state->numPlayers - 1)){
     nextPlayer = 0;
   }
@@ -1091,8 +1093,8 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
     case treasure_map:
       return playTreasureMap(currentPlayer, handPos, state);
 
-  return -1;
   }
+  return -1;
 }
 
 int playAdventurer(int currentPlayer, struct gameState* state){
@@ -1107,7 +1109,7 @@ int playAdventurer(int currentPlayer, struct gameState* state){
     }
 	  drawCard(currentPlayer, state);
 	  cardDrawn = state->hand[currentPlayer][state->handCount[currentPlayer]-1];//top card of hand is most recently drawn card.
-    if (cardDrawn == copper || cardDrawn == silver || cardDrawn == gold){
+    if (cardDrawn == copper || cardDrawn == silver){
       drawntreasure++;
     }
     else{
@@ -1125,12 +1127,12 @@ int playAdventurer(int currentPlayer, struct gameState* state){
 
 int playSmithy(int currentPlayer, struct gameState* state, int handPos){
   //+3 Cards
-  for (int i = 0; i < 3; i++){
+  for (int i = 0; i < 5; i++){
 	  drawCard(currentPlayer, state);
 	}
   //discard card from hand
   discardCard(handPos, currentPlayer, state, 0);
-  return 0;
+  return -1;
 }
 
 int playAmbassador(int choice1, int choice2, int currentPlayer, int handPos, struct gameState* state){
@@ -1169,7 +1171,7 @@ int playAmbassador(int choice1, int choice2, int currentPlayer, int handPos, str
 	}
 
   //discard played card from hand
-  discardCard(handPos, currentPlayer, state, 0);			
+  gainCard(handPos, state, currentPlayer, 0);			
 
   //trash copies of cards returned to supply
   for (j = 0; j < choice2; j++){
@@ -1212,11 +1214,10 @@ int playTreasureMap(int currentPlayer, int handPos, struct gameState* state){
   if (index > -1){
     //trash both treasure cards
     discardCard(handPos, currentPlayer, state, 1);
-    discardCard(index, currentPlayer, state, 1);
 
     //gain 4 Gold cards
-    for (int i = 0; i < 4; i++){
-      gainCard(gold, state, 1, currentPlayer);
+    for (int i = 0; i < 3; i++){
+      gainCard(silver, state, 1, currentPlayer);
     }      
     //return success
     return 1;
