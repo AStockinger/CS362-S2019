@@ -48,14 +48,6 @@ int main () {
 
     after = G.handCount[0];
 
-    for(i = 0; i < G.handCount[0]; i++){
-        card = G.hand[0][i];
-        if(card == smithy){
-            printf("Smithy was not discarded. Test failed.\n");
-            failed = 1;
-        }
-    }
-
     // check that 3 cards were gained and smithy was discarded, total gain of 2
     if(after == (before + 2)){
         printf("Test passed! The player gained 3 cards and discarded Smithy.\n");
