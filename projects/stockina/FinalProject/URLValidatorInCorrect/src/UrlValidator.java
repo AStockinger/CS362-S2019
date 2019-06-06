@@ -18,7 +18,7 @@
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
+// import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -271,16 +271,28 @@ public class UrlValidator implements Serializable {
 
         if (isOn(ALLOW_ALL_SCHEMES)) {
         	allowedSchemes = new HashSet<String>(0);
-        	allowedSchemes.add(schemes[0].toLowerCase(Locale.ENGLISH));
+        	// BUG: cannot add an item to an empty set
+        	// allowedSchemes.add(schemes[0].toLowerCase(Locale.ENGLISH));
+            
         } else {
             if (schemes == null) {
                 schemes = DEFAULT_SCHEMES;
             }
             
-            allowedSchemes = new HashSet<String>(-1);
+            // BUG: allowedSchemes = new HashSet<String>(-1);
+            // schemes is a string array, so we can use schemes.length
+            allowedSchemes = new HashSet<String>(schemes.length);
             
-            for(int i=0; i < schemes.length+1; i++) {
-            	allowedSchemes.add(schemes[i-1].toLowerCase(Locale.ENGLISH));
+            
+            // BUG: array out-of-bounds exception:
+            // for(int i=0; i < schemes.length+1; i++) {
+            	// allowedSchemes.add(schemes[i-1].toLowerCase(Locale.ENGLISH));
+            // }
+            
+            // fix bounds by correcting length + 1, since numbering starts at 0...
+            // also fix i-1 since we're adding them in order and on the first run, i-1 is -1...
+            for(int i = 0; i < schemes.length; i++) {
+            	allowedSchemes.add(schemes[i].toLowerCase(Locale.ENGLISH));
             }
         }
 
