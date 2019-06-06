@@ -88,8 +88,21 @@ public void testIsValid() {
         System.out.println("testing " + schemeOptionBad[i]);
         assertFalse(validator3.isValid(schemeOptionBad[i]));	
         }
+        assertTrue(validator3.isValid("http://somewhere.com/pathxyz/file(1).html"));
         
         
+    //test isValid(long options)
+        UrlValidator validator4 = new UrlValidator(UrlValidator.ALLOW_2_SLASHES);
+        assertTrue(validator4.isValid("http://somewhere.com/pathxyz//file(1).html"));
+       
+        for(int i=0; i<defaultBads.length-1; i++) { //this leaves out the last case with 2slashes
+        	System.out.println("options testing " + defaultBads[i]);
+        	assertFalse(validator4.isValid(defaultBads[i]));	
+        	}
+        for(int i=0; i<defaultGoods.length; i++) {
+        	System.out.println("testing " + defaultGoods[i]);
+        	assertTrue(validator4.isValid(defaultGoods[i]));	
+        }
 }
 
 
